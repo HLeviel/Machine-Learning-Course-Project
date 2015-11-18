@@ -1,0 +1,6 @@
+---
+title: "Machine Learning Course Project"
+author: "Hubert LEVIEL"
+date: "November 18th, 2015"
+output: pdf_document
+---
