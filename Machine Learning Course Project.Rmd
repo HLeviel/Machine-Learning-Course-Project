@@ -35,8 +35,9 @@ dim(training.complete)
 ```
 
 This leaves us with 53 columns (out of 160)
+
 # Training
-To predict the classe outcome, I am going to use Linear Discriminant Analysis (LDA) method of caret package, and train on other variables.
+To predict the classe outcome, I am going to use Quadratic Discriminant Analysis (qda) method of caret package, and train on other variables.
 
 ```{r, echo=TRUE}
 mymod <- train(classe~., data=training.complete, method='qda', show=FALSE)
@@ -47,6 +48,8 @@ We can see that there is 90% accuracy with the training data
 table(predict(mymod, training.complete),training.complete$classe)
 1-sum(predict(mymod, training.complete)!=training.complete$classe)/dim(training.complete)[1]
 ```
+
+# Testing
 
 We can see that there is 90% accuracy with the test data
 ```{r, echo=TRUE}

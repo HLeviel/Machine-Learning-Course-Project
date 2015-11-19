@@ -95,7 +95,11 @@ testing.complete &lt;- testing[,names(training.complete)]
 testing_set.complete &lt;- testing_set[,names(training.complete)[names(training.complete)!=&quot;classe&quot;]]
 dim(training.complete)</code></pre>
 <pre><code>## [1] 13737    53</code></pre>
-<p>This leaves us with 53 columns (out of 160) # Training To predict the classe outcome, I am going to use Linear Discriminant Analysis (LDA) method of caret package, and train on other variables.</p>
+<p>This leaves us with 53 columns (out of 160)</p>
+</div>
+<div id="training" class="section level1">
+<h1>Training</h1>
+<p>To predict the classe outcome, I am going to use Quadratic Discriminant Analysis (qda) method of caret package, and train on other variables.</p>
 <pre class="r"><code>mymod &lt;- train(classe~., data=training.complete, method='qda', show=FALSE)</code></pre>
 <pre><code>## Loading required package: MASS</code></pre>
 <p>We can see that there is 90% accuracy with the training data</p>
@@ -109,6 +113,9 @@ dim(training.complete)</code></pre>
 ##   E    6   21    7   21 2295</code></pre>
 <pre class="r"><code>1-sum(predict(mymod, training.complete)!=training.complete$classe)/dim(training.complete)[1]</code></pre>
 <pre><code>## [1] 0.9038364</code></pre>
+</div>
+<div id="testing" class="section level1">
+<h1>Testing</h1>
 <p>We can see that there is 90% accuracy with the test data</p>
 <pre class="r"><code>table(predict(mymod, testing.complete),testing.complete$classe)</code></pre>
 <pre><code>##    
