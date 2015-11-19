@@ -2,5 +2,72 @@
 title: "Machine Learning Course Project"
 author: "Hubert LEVIEL"
 date: "November 18th, 2015"
-output: pdf_document
+output: html_document
 ---
+
+# Summary
+The goal of this project is to build a machine learning algorithm to predict activity quality from activity monitors
+
+# Loading and parting the data
+
+We load the data, then immediately part it into training and testing
+```{r, echo=TRUE}
+data <- read.csv(url('https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv'))
+testing_set <- read.csv(url('https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv'))
+
+library(caret)
+set.seed(555)
+trainingIndex <- createDataPartition(data$classe, p=0.7, list=FALSE)
+training <- data[trainingIndex,]
+testing <- data[-trainingIndex,]
+```
+
+# Preprocessing
+The summary of training data shows many NAs or unset values, so I choose to remove the columns with to many NAs or unset values.
+Also we can see that some variables like X or window or date are ordered and shouldn't be used to build a model, neither the username. So I also remove the first 7 columns.
+And then I remove the exact same columns from the testing.
+```{r, echo=TRUE}
+training.complete <- training[, colSums(is.na(training) | training=='' ) < nrow(training) * 0.5]
+training.complete <- training.complete[, -c(1:7)]
+testing.complete <- testing[,names(training.complete)]
+testing_set.complete <- testing_set[,names(training.complete)[names(training.complete)!="classe"]]
+dim(training.complete)
+```
+
+This leaves us with 53 columns (out of 160)
+# Training
+To predict the classe outcome, I am going to use Linear Discriminant Analysis (LDA) method of caret package, and train on other variables.
+
+```{r, echo=TRUE}
+mymod <- train(classe~., data=training.complete, method='qda', show=FALSE)
+```
+
+We can see that there is 90% accuracy with the training data
+```{r, echo=TRUE}
+table(predict(mymod, training.complete),training.complete$classe)
+1-sum(predict(mymod, training.complete)!=training.complete$classe)/dim(training.complete)[1]
+```
+
+We can see that there is 90% accuracy with the test data
+```{r, echo=TRUE}
+table(predict(mymod, testing.complete),testing.complete$classe)
+1-sum(predict(mymod, testing.complete)!=testing.complete$classe)/dim(testing.complete)[1]
+```
+
+
+```{r, echo=FALSE}
+
+answers = predict(mymod, testing_set.complete)
+
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
+
+pml_write_files(as.character( answers))
+
+```
+
