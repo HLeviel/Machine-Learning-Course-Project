@@ -1,7 +1,7 @@
 ---
 title: "Machine Learning Course Project"
 author: "Hubert LEVIEL"
-date: "November 18th, 2015"
+date: "December 22th, 2015"
 output: html_document
 ---
 
@@ -11,7 +11,7 @@ The goal of this project is to build a machine learning algorithm to predict act
 # Loading and parting the data
 
 We load the data, then immediately part it into training and testing
-```{r, echo=TRUE,  cache=TRUE}
+```{r, echo=TRUE,  cache=TRUE,warning=FALSE, results='hide'}
 data <- read.csv(url('http://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv'))
 testing_set <- read.csv(url('http://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv'))
 
@@ -40,8 +40,9 @@ This leaves us with 53 columns (out of 160)
 # Training
 To predict the classe outcome, I am going to use random forest (rf) method of caret package, and train on other variables.
 
-```{r, echo=TRUE}
-mymod <- train(classe~., data=training.complete, method='rf', ntree=5, trControl= trainControl(method = "cv", number = 3, returnResamp = "all",classProbs = TRUE))
+```{r, echo=TRUE,warning=FALSE, results='hide'}
+mymod <- train(classe~., data=training.complete, method='rf', ntree=5, 
+               trControl= trainControl(method = "cv", number = 3, returnResamp = "all",classProbs = TRUE))
 ```
 
 We can see that there is 99.8% accuracy with the training data
