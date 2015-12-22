@@ -36,14 +36,15 @@ dim(training.complete)
 
 This leaves us with 53 columns (out of 160)
 
+
 # Training
-To predict the classe outcome, I am going to use Quadratic Discriminant Analysis (qda) method of caret package, and train on other variables.
+To predict the classe outcome, I am going to use random forest (rf) method of caret package, and train on other variables.
 
 ```{r, echo=TRUE}
-mymod <- train(classe~., data=training.complete, method='qda', show=FALSE)
+mymod <- train(classe~., data=training.complete, method='rf', ntree=5, trControl= trainControl(method = "cv", number = 3, returnResamp = "all",classProbs = TRUE))
 ```
 
-We can see that there is 90% accuracy with the training data
+We can see that there is 99.8% accuracy with the training data
 ```{r, echo=TRUE}
 table(predict(mymod, training.complete),training.complete$classe)
 1-sum(predict(mymod, training.complete)!=training.complete$classe)/dim(training.complete)[1]
@@ -51,7 +52,7 @@ table(predict(mymod, training.complete),training.complete$classe)
 
 # Testing
 
-We can see that there is 90% accuracy with the test data
+We can see that there is 98.5% accuracy with the test data
 ```{r, echo=TRUE}
 table(predict(mymod, testing.complete),testing.complete$classe)
 1-sum(predict(mymod, testing.complete)!=testing.complete$classe)/dim(testing.complete)[1]
@@ -65,7 +66,7 @@ answers = predict(mymod, testing_set.complete)
 pml_write_files = function(x){
   n = length(x)
   for(i in 1:n){
-    filename = paste0("problem_id_",i,".txt")
+    filename = paste0("problem1_id_",i,".txt")
     write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
   }
 }
