@@ -74,8 +74,8 @@ img {
 <div id="loading-and-parting-the-data" class="section level1">
 <h1>Loading and parting the data</h1>
 <p>We load the data, then immediately part it into training and testing</p>
-<pre class="r"><code>data &lt;- read.csv(url('https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv'))
-testing_set &lt;- read.csv(url('https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv'))
+<pre class="r"><code>data &lt;- read.csv(url('http://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv'))
+testing_set &lt;- read.csv(url('http://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv'))
 
 library(caret)</code></pre>
 <pre><code>## Warning: package 'caret' was built under R version 3.2.2</code></pre>
@@ -99,34 +99,37 @@ dim(training.complete)</code></pre>
 </div>
 <div id="training" class="section level1">
 <h1>Training</h1>
-<p>To predict the classe outcome, I am going to use Quadratic Discriminant Analysis (qda) method of caret package, and train on other variables.</p>
-<pre class="r"><code>mymod &lt;- train(classe~., data=training.complete, method='qda', show=FALSE)</code></pre>
-<pre><code>## Loading required package: MASS</code></pre>
-<p>We can see that there is 90% accuracy with the training data</p>
+<p>To predict the classe outcome, I am going to use random forest (rf) method of caret package, and train on other variables.</p>
+<pre class="r"><code>mymod &lt;- train(classe~., data=training.complete, method='rf', ntree=5, trControl= trainControl(method = &quot;cv&quot;, number = 3, returnResamp = &quot;all&quot;,classProbs = TRUE))</code></pre>
+<pre><code>## Loading required package: randomForest</code></pre>
+<pre><code>## Warning: package 'randomForest' was built under R version 3.2.2</code></pre>
+<pre><code>## randomForest 4.6-12
+## Type rfNews() to see new features/changes/bug fixes.</code></pre>
+<p>We can see that there is 99.8% accuracy with the training data</p>
 <pre class="r"><code>table(predict(mymod, training.complete),training.complete$classe)</code></pre>
 <pre><code>##    
 ##        A    B    C    D    E
-##   A 3754  194    2    8    0
-##   B  102 2189  118    8   65
-##   C   19  246 2259  296  102
-##   D   25    8   10 1919   63
-##   E    6   21    7   21 2295</code></pre>
+##   A 3905    2    0    0    0
+##   B    1 2650    2    0    1
+##   C    0    2 2392    4    2
+##   D    0    4    2 2246    1
+##   E    0    0    0    2 2521</code></pre>
 <pre class="r"><code>1-sum(predict(mymod, training.complete)!=training.complete$classe)/dim(training.complete)[1]</code></pre>
-<pre><code>## [1] 0.9038364</code></pre>
+<pre><code>## [1] 0.9982529</code></pre>
 </div>
 <div id="testing" class="section level1">
 <h1>Testing</h1>
-<p>We can see that there is 90% accuracy with the test data</p>
+<p>We can see that there is 98% accuracy with the test data</p>
 <pre class="r"><code>table(predict(mymod, testing.complete),testing.complete$classe)</code></pre>
 <pre><code>##    
 ##        A    B    C    D    E
-##   A 1597   86    0    3    0
-##   B   50  940   48    5   35
-##   C   14   95  973  134   43
-##   D   11    6    3  812   25
-##   E    2   12    2   10  979</code></pre>
+##   A 1667   14    0    2    1
+##   B    3 1108   21    1    7
+##   C    1   12  994   25    2
+##   D    2    4    9  935    9
+##   E    1    1    2    1 1063</code></pre>
 <pre class="r"><code>1-sum(predict(mymod, testing.complete)!=testing.complete$classe)/dim(testing.complete)[1]</code></pre>
-<pre><code>## [1] 0.9007647</code></pre>
+<pre><code>## [1] 0.9804588</code></pre>
 </div>
 
 
